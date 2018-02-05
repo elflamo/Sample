@@ -15,7 +15,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User)
     mobile_no = models.CharField(max_length=20, null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
-    birth_day = models.DateField()
+    birth_day = models.DateField(null=True, blank=True)
     gender = models.CharField(choices=GENDER_CHOICES, max_length=20)
     country = models.CharField(max_length=20, null=True, blank=True)
     created_on = models.DateField(auto_now_add=True, editable=False)
@@ -24,43 +24,35 @@ class Profile(models.Model):
         return self.user.email
 
 
-class Department(models.Model):
+class Offer(models.Model):
 
-    name = models.CharField(max_length=40)
-    created_on = models.DateField(auto_now_add=True,editable=False)
+    name = models.TextField()
+    description = models.TextField()
+    discount_percent = models.IntegerField(null=True, blank=True)
+    flat_discount = models.IntegerField(null=True, blank=True)
+    start_date = models.DateField()
+    end_date = models.DateField()
 
     def __str__(self):
         return self.name
 
 
-class Employee(models.Model):
+class Store(models.Model):
 
-    user = models.ForeignKey(Profile)
-    department = models.ForeignKey(Department)
-    salary = models.CharField(max_length=20)
-    role = models.CharField(max_length=40)
-    joining = models.DateField(auto_now_add=True)
+    associated_brand = models.CharField(max_length=40)
+    location = models.TextField()
+    city = models.CharField(max_length=20)
+    offers = models.ManyToManyField(Offer)
+    subscribed = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.user) + " | " + str(self.role)
+        return self.associated_brand + " | " + self.city
 
 
-class Project(models.Model):
-
-    PHASES = (
-        ('Planning','Planning'),
-        ('Designing','Designing'),
-        ('Development','Development'),
-        ('Testing','Testing'),
-        ('Completed','Completed'),
-        ('Delivered','Delivered')
-    )
+class Brand(models.Model):
 
     name = models.CharField(max_length=20)
-    team = models.ManyToManyField(Employee)
-    start_date = models.DateField(auto_now_add=True, editable=False)
-    delivery_date = models.DateField()
-    phase = models.CharField(choices=PHASES, max_length=20)
+    stores = models.ManyToManyField(Store)
 
     def __str__(self):
-        return str(self.name) + " | " + str(self.phase)
+        return self.name

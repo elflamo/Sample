@@ -1,11 +1,14 @@
 from django.conf.urls import url, include
 from django.contrib import admin
-from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh_jwt_token
 from main import views
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^api-token-auth/', obtain_jwt_token),
-    url(r'^list/users/', views.ListUsersView.as_view(), name="list-users")
+    url(r'^token/obtain', obtain_jwt_token),
+    url(r'^token/verify', verify_jwt_token),
+    url(r'^token/refresh', refresh_jwt_token),
+    url(r'^signup', views.ListUsersView.as_view(), name="list-users")
 
 ]
