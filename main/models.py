@@ -53,6 +53,7 @@ class Brand(models.Model):
 
     name = models.CharField(max_length=20)
     stores = models.ManyToManyField(Store)
+    owner = models.ForeignKey(User)
 
     def __str__(self):
         return self.name
