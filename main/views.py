@@ -35,15 +35,14 @@ class SignupView(CreateAPIView):
 
 class LoginView(GenericAPIView):
 
-    permission_classes = ()
-    authentication_classes = (JSONWebTokenAuthentication, )
-    serializer_class = serializers.LoginSerializer
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
 
-        print self.request.user
+        print request.user
 
-        if self.request.user:
+        if request.user:
             return Response(data={'success':True}, status=status.HTTP_200_OK)
         else:
             return Response(data={'success':False}, status=status.HTTP_404_NOT_FOUND)

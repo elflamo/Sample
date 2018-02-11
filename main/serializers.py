@@ -8,7 +8,7 @@ class SignupSerializer(serializers.Serializer):
     confirm_password = serializers.CharField(max_length=20, required=True)
 
 
-class LoginSerializer(serializers.Serializer):
-
-    email = serializers.EmailField(max_length=20, required=True)
-    password = serializers.CharField(max_length=20, required=True)
+# class LoginSerializer(serializers.Serializer):
+#
+#     email = serializers.EmailField(max_length=20, required=True)
+#     password = serializers.CharField(max_length=20, required=True)
