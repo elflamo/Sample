@@ -10,6 +10,6 @@ urlpatterns = [
     url(r'^token/verify', verify_jwt_token),
     url(r'^token/refresh', refresh_jwt_token),
     url(r'^signup$', views.SignupView.as_view(), name="signup"),
-    url(r'^login$', views.LoginView.as_view(), name="login")
+    url(r'^forgot/password$', views.ForgotPasswordView.as_view(), name="initiate-reset-password"),
 
 ]

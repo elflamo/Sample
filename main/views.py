@@ -33,16 +33,17 @@ class SignupView(CreateAPIView):
         return Response(data={'success':'Created'}, status=status.HTTP_201_CREATED, content_type="application/json")
 
 
-class LoginView(GenericAPIView):
+class ForgotPasswordView(GenericAPIView):
 
-    authentication_classes = (JSONWebTokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    authentication_classes = ()
+    permission_classes = ()
+    serializer_class = serializers.ForgotPasswordSerializer
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
 
-        print request.user
+        user_obj = models.User.objects.filter(email=request.data['email']).first()
 
-        if request.user:
-            return Response(data={'success':True}, status=status.HTTP_200_OK)
-        else:
-            return Response(data={'success':False}, status=status.HTTP_404_NOT_FOUND)
+        if user_obj is None:
+            return Response(data={'error':'No user found'}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION, content_type="application/json")
+
+        pass
