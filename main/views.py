@@ -18,10 +18,10 @@ class SignupView(CreateAPIView):
     def create(self, request, *args, **kwargs):
 
         if request.data.get('password') != request.data.get('confirm_password'):
-            return Response(data={'error':'Password mismatch'}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+            return Response(data={'error':'Password mismatch'}, status=status.HTTP_200_OK, content_type="application/json")
 
         if models.User.objects.filter(email=request.data.get('email')).first() is not None:
-            return Response(data={'error':'User already created with this email id'}, status=status.HTTP_302_FOUND)
+            return Response(data={'error':'User with this email already exists'}, status=status.HTTP_200_OK, content_type="application/json")
 
         user_obj = models.User.objects.create(
             email=request.data.get('email'),
@@ -30,7 +30,7 @@ class SignupView(CreateAPIView):
         user_obj.set_password(request.data.get('password'))
         user_obj.save()
 
-        return Response(data={'success':'Created'}, status=status.HTTP_201_CREATED)
+        return Response(data={'success':'Created'}, status=status.HTTP_201_CREATED, content_type="application/json")
 
 
 class LoginView(GenericAPIView):

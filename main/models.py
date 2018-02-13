@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
+from utils import generate_unique_key
 
 
 class Profile(models.Model):
@@ -57,3 +58,37 @@ class Brand(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Otp(models.Model):
+
+    user = models.ForeignKey(User)
+    otp = models.CharField(max_length=20)
+    verified = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.otp
+
+    @classmethod
+    def generate(cls, user):
+        otp = cls.objects.create(
+            user=user,
+            otp=generate_unique_key(6)
+        )
+        return otp.otp
+
+
+class EmailTemplate(models.Model):
+
+    EMAIL_TYPE_CHOICES = (
+        ('welcome-email', 'welcome-email'),
+        ('forgot-password', 'forgot-password'),
+        ('payment-success', 'payment-success'),
+    )
+
+    type = models.CharField(max_length=100, choices=EMAIL_TYPE_CHOICES, blank=True, null=True)
+    subject = models.CharField(max_length=20, blank=True, null=True)
+    body = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.type
