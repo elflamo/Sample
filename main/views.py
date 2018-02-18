@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from django.db.models import Sum, Max
 
 
 class SignupView(CreateAPIView):
@@ -85,3 +86,25 @@ class ResetPasswordView(GenericAPIView):
             user_obj.set_password(confirm_password)
             user_obj.save()
             return Response(data={'success':'Password has been reset'}, status=status.HTTP_200_OK, content_type="application/json")
+
+
+class DashboardBaseView(GenericAPIView):
+
+    authentication_classes = (JSONWebTokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+
+        user_object = models.User.objects.get(username=request.user)
+        a = models.Offer.objects.filter(store__brand__owner=user_object, active=True).aggregate(Max('views'))
+
+        stats = dict()
+        stats['active_offers_count'] = models.Offer.objects.filter(store__brand__owner=user_object,
+                                                                   active=True).count()
+        stats['active_stores_count'] = models.Store.objects.filter(brand__owner=user_object,
+                                                                   subscribed=True).count()
+        stats['total_views_offers'] = models.Offer.objects.filter(store__brand__owner=user_object,
+                                                                  active=True).aggregate(Sum('views'))['views__sum']
+        stats['most_viewed_offer'] = models.Offer.objects.filter(views=a['views__max']).first().name
+
+        return Response(data=stats, status=status.HTTP_200_OK, content_type="application/json")

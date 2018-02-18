@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^signup$', views.SignupView.as_view(), name="signup"),
     url(r'^send/reset/otp$', views.SendResetOtpView.as_view(), name="send-otp-email"),
     url(r'^check/otp$', views.CheckOtpView.as_view(), name="check-otp"),
-    url(r'^reset/password$', views.ResetPasswordView.as_view(), name="reset-password")
+    url(r'^reset/password$', views.ResetPasswordView.as_view(), name="reset-password"),
+    url(r'^dashboard/basics$', views.DashboardBaseView.as_view(), name="dashboard-base")
 
 ]
