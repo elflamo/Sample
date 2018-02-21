@@ -110,6 +110,7 @@ class DashboardBaseView(GenericAPIView):
         stats['total_views_offers'] = offer_view_object.aggregate(Sum('views'))['views__sum']
         stats['most_viewed_offer'] = models.OfferViews.objects.filter(views=offer_view_object.aggregate(Max('views'))['views__max']).first().offer.name
         stats['most_views_on'] = offer_view_object.aggregate(Max('views'))['views__max']
+        stats['location_max_views'] = models.OfferViews.objects.filter(views=offer_view_object.aggregate(Max('views'))['views__max']).first().store.location
 
         print stats
 
