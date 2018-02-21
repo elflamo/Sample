@@ -95,16 +95,22 @@ class DashboardBaseView(GenericAPIView):
 
     def get(self, request, *args, **kwargs):
 
-        user_object = models.User.objects.get(username=request.user)
-        a = models.Offer.objects.filter(store__brand__owner=user_object, active=True).aggregate(Max('views'))
-
         stats = dict()
+        user_object = models.User.objects.get(username=request.user)
+        offer_view_object = models.OfferViews.objects.filter(store__brand__owner=user_object,
+                                                             store__subscribed=True,
+                                                             offer__active=True
+                                                             )
+
         stats['active_offers_count'] = models.Offer.objects.filter(store__brand__owner=user_object,
+                                                                   store__subscribed=True,
                                                                    active=True).count()
         stats['active_stores_count'] = models.Store.objects.filter(brand__owner=user_object,
                                                                    subscribed=True).count()
-        stats['total_views_offers'] = models.Offer.objects.filter(store__brand__owner=user_object,
-                                                                  active=True).aggregate(Sum('views'))['views__sum']
-        stats['most_viewed_offer'] = models.Offer.objects.filter(views=a['views__max']).first().name
+        stats['total_views_offers'] = offer_view_object.aggregate(Sum('views'))['views__sum']
+        stats['most_viewed_offer'] = models.OfferViews.objects.filter(views=offer_view_object.aggregate(Max('views'))['views__max']).first().offer.name
+        stats['most_views_on'] = offer_view_object.aggregate(Max('views'))['views__max']
+
+        print stats
 
         return Response(data=stats, status=status.HTTP_200_OK, content_type="application/json")

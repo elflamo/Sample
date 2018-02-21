@@ -33,7 +33,6 @@ class Offer(models.Model):
     flat_discount = models.IntegerField(null=True, blank=True)
     start_date = models.DateField()
     end_date = models.DateField()
-    views = models.IntegerField(null=True, blank=True)
     active = models.BooleanField(default=False)
 
     def __str__(self):
@@ -62,15 +61,15 @@ class Brand(models.Model):
         return self.name
 
 
-class BrandStoreOffers(models.Model):
+class OfferViews(models.Model):
 
-    brand = models.ForeignKey(Brand)
-    store = models.ForeignKey(Store)
     offer = models.ForeignKey(Offer)
-    status = models.BooleanField(default=False)
+    views = models.IntegerField(default=0)
+    store = models.ForeignKey(Store)
+    buyed = models.IntegerField(default=0)
 
     def __unicode__(self):
-        return self.brand + "|" + self.store + "|" + self.offer + "|" + self.status
+        return str(self.offer) + " | " + str(self.views) + " | " + str(self.store)
 
 
 class Otp(models.Model):
