@@ -108,9 +108,21 @@ class DashboardBaseView(GenericAPIView):
         stats['active_stores_count'] = models.Store.objects.filter(brand__owner=user_object,
                                                                    subscribed=True).count()
         stats['total_views_offers'] = offer_view_object.aggregate(Sum('views'))['views__sum']
+        stats['total_offers_buyed'] = offer_view_object.aggregate(Sum('buyed'))['buyed__sum']
         stats['most_viewed_offer'] = models.OfferViews.objects.filter(views=offer_view_object.aggregate(Max('views'))['views__max']).first().offer.name
+        stats['most_buyed_offer'] = models.OfferViews.objects.filter(buyed=offer_view_object.aggregate(Max('buyed'))['buyed__max']).first().offer.name
         stats['most_views_on'] = offer_view_object.aggregate(Max('views'))['views__max']
+        stats['most_buys_on'] = offer_view_object.aggregate(Max('buyed'))['buyed__max']
         stats['location_max_views'] = models.OfferViews.objects.filter(views=offer_view_object.aggregate(Max('views'))['views__max']).first().store.location
+        stats['location_max_buyed'] = models.OfferViews.objects.filter(buyed=offer_view_object.aggregate(Max('buyed'))['buyed__max']).first().store.location
+
+        duration = dict()
+        duration['views_start_date'] = models.OfferViews.objects.filter(views=offer_view_object.aggregate(Max('views'))['views__max']).first().offer.start_date.strftime("%e/%m")
+        duration['views_end_date'] = models.OfferViews.objects.filter(views=offer_view_object.aggregate(Max('views'))['views__max']).first().offer.end_date.strftime("%e/%m")
+        duration['buys_start_date'] = models.OfferViews.objects.filter(buyed=offer_view_object.aggregate(Max('buyed'))['buyed__max']).first().offer.start_date.strftime("%e/%m")
+        duration['buys_end_date'] = models.OfferViews.objects.filter(buyed=offer_view_object.aggregate(Max('buyed'))['buyed__max']).first().offer.end_date.strftime("%e/%m")
+
+        stats['durations'] = duration
 
         print stats
 
