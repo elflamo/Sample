@@ -127,3 +127,25 @@ class DashboardBaseView(GenericAPIView):
         print stats
 
         return Response(data=stats, status=status.HTTP_200_OK, content_type="application/json")
+
+
+class ListCreateStoreView(ListCreateAPIView):
+
+    authentication_classes = (JSONWebTokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+    serializer_class = serializers.ListCreateStoreSerializer
+
+    def get_queryset(self):
+        user_obj = models.User.objects.filter(username=self.request.user)
+        return models.Store.objects.filter(brand__owner=user_obj)
+
+
+class RUDStoreView(RetrieveUpdateDestroyAPIView):
+
+    authentication_classes = (JSONWebTokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+    serializer_class = serializers.RUDStoreSerializer
+
+    def get_object(self):
+        user_obj = models.User.objects.filter(username=self.request.user)
+        return models.Store.objects.filter(id=self.kwargs['pk'], brand__owner=user_obj).first()

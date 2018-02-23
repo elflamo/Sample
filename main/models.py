@@ -44,7 +44,7 @@ class Store(models.Model):
     associated_brand = models.CharField(max_length=40)
     location = models.TextField()
     city = models.CharField(max_length=20)
-    offers = models.ManyToManyField(Offer)
+    offers = models.ManyToManyField(Offer, null=True, blank=True)
     subscribed = models.BooleanField(default=False)
 
     def __str__(self):
